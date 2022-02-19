@@ -1,0 +1,110 @@
+-*- line-spacing: 0.1; -*-
+#+TITLE: Lab 2
+#+STARTUP: latexpreview
+#+STARTUP: show2levels
+#+INCLUDE: "~/.doom.d/orgReportHeader.org"
+#+OPTIONS: H:3 d:nil tags:nil email:t toc:t broken-links:t ^:nil #\n:t
+
+* Video Notes
+** Equipment
+*** Dc Power Supply
+*** Model Transmission Line
+*** Multi-meters
+*** Synchronization unit
+** Experimental Procedure
+- Load Switch Disabled
+- 3-Phase power supply connected to load switch
+- 3-Phase Wattmeter connected to the three phase supply
+- Three Phase supply connected to the stator of the synchronous motor
+- Dc power supply connected to synchronous machine rotor
+- DC Power supply switched on
+- DC Power to motor increased gradually
+- DC Motor begins to turn Drive train at =V\approx8-11Vdc=
+
+*** synchronisation
+- Dc voltage increased until DC motor is running at synchronous speed =\approx1500rpm=
+- Second DC Supply turned on to exit the rotor
+- Excitation Current increased gradually
+- Generator open circuit voltage noted as changing as excitation current to the rotor is increased?
+- Machine is Disabled
+
+*** Open circuit Test
+- Name Plate Rating of the Synchronous machine noted
+
+  | Stator Voltage (V) | Stator Voltage +20% (V) | Rotor Voltage (VDC) | Power (W) @1500 rpm |
+  |--------------------+-------------------------+---------------------+---------------------|
+  |               41.5 |                    49.8 |                  24 |                  50 |
+    #+TBLFM: $2=$1 1.2
+
+- Additional =20%= margin added to stator voltage rating
+- DC Motor restarted
+- Synchronous motor spun up to =1500rpm=
+- The Generator side of the synchronisation unit is disconnected
+- The Rotor excitation current is set to =0A=
+- The rotor excitation current is increased in steps of =0.5A= until the measured stator voltage reaches =49.8V= (calculated according to: \(1.2\times V_{\text{stator Name-Plate}}\)).
+  + for each =0.5A= step the synchronous speed was controlled to =1500rpm= by adjusting the supply to the DC Motor
+  + for each step of =0.5A= the open circuit generator voltage was recorded
+
+*** Short Circuit Test
+- The leads leaving the 3 Phase wattmeter which were disconnected Last experiment are now connected together effectively short-circuiting the Generator
+- The rotor field supply is set to zero and the supply is switched on
+- The DC Motor is turned on and the DC voltage supply is adjusted until the speed of the drive train is at 1500 rpm
+- Rotor field excitation current gradually increased in steps of =0.05A=
+  + rotor speed is kept constant at =1500rpm= for each step
+  + for each step the current flowing out of the generator terminals is noted
+
+*** Load Test
+**** Synchronisation
+- Synchronous machine used as a generator into an infinite bus
+- A 3-Phase Power supply is used to simulate the grid
+- Load switch is set to =Off= on the synchronisation unit
+- The Synchronisation unit is set to =Intensity=
+- The leads between the Synchronisation unit and the 3-Phase Wattmeter are reconnected
+- The DC supply to the DC motor is switched on and the supply voltage is adjusted until the speed of the generator reaches =1500rpm=
+- The DC Rotor supply is now turned on and the current is adjusted until the generator line voltage is =45V= which is the same amplitude of the 3-Phase supply
+- The thee phase supply is now turned on
+  + It is noted that the three lights on the synchronisation unit now begin to flash at =\approx0.5Hz=
+- The motor speed is then adjusted by varying the DC motor current until the lights cease to flash.
+- The Load switch is now set to =On=
+  + it is noted that the lights now Cease to flash meaning the synchronous machine is now synchronised with the 3-Phase supply
+
+- The Rotor field excitation current and the DC Motor Current (its torque) is adjusted to minimise the AC stator current
+  + the generator is neither motoring or generating with losses supplied by the DC motor (no real power is flowing between the grid and the synchronous machine)
+
+- The Current to the DC motor is increased until the stator current is roughly \(2/3\; I_{nom}\) which is calculated as =464mA=
+  + I Guess this will be primarily real power
+- the rotor excitation current is then adjusted until the stator current is minimised
+  + cancelling out the reactive power by altering the magnitude of the EMF?
+- Once the stator current is minimised, the following are recorded
+  + Final stator current
+  + Prime mover input power
+  + rotor excitation current
+  + Terminal voltage
+  + Power factor
+  + rotor angle
+- the synchronous speed of the rotor is then measured with the lamp thing
+
+**** second test - Step 4
+- The rotor excitation current is increased until the stator current reaches its nominal value.
+  + the Prime-mover torque is kept constant
+- The following are recorded:
+  + Final stator current
+  + Prime mover input power
+  + rotor excitation current
+  + Terminal voltage
+  + Power factor
+  + rotor angle
+
+**** Third test - Step 5
+- 24:29
+- DC Motor Power is kept constant
+- Rotor excitation current is reduced to the value measured in step 3: =478mA=
+- Rotor excitation current is continually reduced until the stator current reaches its nominal value
+- The following are recorded at this point:
+  + Final stator current
+  + Prime mover input power
+  + rotor excitation current
+  + Terminal voltage
+  + Power factor
+  + rotor angle
+- the synchronising switch is opened and all power supplys are turned off
