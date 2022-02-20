@@ -3,13 +3,22 @@
 #+STARTUP: latexpreview
 #+STARTUP: show2levels
 #+INCLUDE: "~/.doom.d/orgReportHeader.org"
-#+OPTIONS: H:3 d:nil tags:nil email:t toc:t broken-links:t ^:nil #\n:t
+#+OPTIONS: H:3 d:nil tags:nil email:t toc:t broken-links:t ^:t #\n:t
 
 * Equipment
 - Dc Power Supply
 - Model Transmission Line
 - Multi-meters
 - Synchronization unit
+** Alternator
+#+ATTR_LATEX: placement [H] :booktabs t:
+#+caption: Alternator Nameplate Values
+#+NAME: tabAltNameplate
+  | Stator Voltage (V) | Stator Voltage +20% (V) | Rotor Voltage (VDC) | Power (W) @1500 rpm |
+  |--------------------+-------------------------+---------------------+---------------------|
+  |               41.5 |                    49.8 |                  24 |                  50 |
+    #+TBLFM: $2=$1 1.2
+
 * Setup
 - Load Switch Disabled
 - 3-Phase power supply connected to load switch
@@ -22,7 +31,7 @@
 * Experiments
 ** synchronisation
 *** Procedure
-- Dc voltage increased until DC motor is running at synchronous speed =\approx1500rpm=
+- Dc voltage increased until DC motor is running at synchronous speed \approx =1500rpm=
 - Second DC Supply turned on to exit the rotor
 - Excitation Current increased gradually
 - Generator open circuit voltage noted as changing as excitation current to the rotor is increased?
@@ -32,10 +41,6 @@
 *** Procedure
 - Name Plate Rating of the Synchronous machine noted
 
-  | Stator Voltage (V) | Stator Voltage +20% (V) | Rotor Voltage (VDC) | Power (W) @1500 rpm |
-  |--------------------+-------------------------+---------------------+---------------------|
-  |               41.5 |                    49.8 |                  24 |                  50 |
-    #+TBLFM: $2=$1 1.2
 
 - Additional =20%= margin added to stator voltage rating
 - DC Motor restarted
@@ -200,29 +205,55 @@
 ** Synchronous Impedance Plot
 
 #+NAME: pltSyncrinousImpedancePlot
-#+BEGIN_SRC jupyter-python :session test :var ocData=tabOcTest scData=tabScTest
+#+BEGIN_SRC jupyter-python :session test :var ocData=tabOcTest scData=tabScTest :exports results
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+plt.rcParams['figure.dpi'] = 300
+plt.rcParams['savefig.dpi'] = 300
+
 ocData = pd.DataFrame(ocData[1:], columns=ocData[0])
 scData = pd.DataFrame(scData[1:], columns=scData[0])
 scData['I_rot_A'] =scData['I_rot_mA']/1000
 ocData['V_stat_Ph'] =ocData['V_stat_LL']/np.cbrt(3)
-ocData['Z_sync'] =ocData['V_stat_LL']/np.cbrt(3)
 
+# here i'm interpolating the SC x axis to the OC x axis
+zSync = scData[['I_stat','I_rot_A']].copy()
+zSync['V_stat_LL']=np.interp(scData['I_rot_A'],ocData['I_rot_A'],ocData['V_stat_LL'])
+zSync['V_stat_Ph']=zSync['V_stat_LL']/np.cbrt(3)
+zSync['z_sync']=zSync['V_stat_Ph']/zSync['I_stat']
+zSync = zSync.drop(zSync[np.isinf(zSync.z_sync)].index)
 
-ax = scData.plot(x='I_rot_A',y='I_stat',figsize=(8, 4),marker = "^")
+ax = scData.plot(x='I_rot_A',y='I_stat',figsize=(8, 4),marker = "+")
 ax.set_xlabel("$I_{rotor}$ (A)")
 ax.set_ylabel("$I_{stat}$ (A)")
 ax.legend(loc='upper left')
+ax.grid('on')
+ax.set_xlim([0,0.55])
+ax.set_ylim(ymin = 0)
+ax.yaxis.label.set_color('b')
 
 ax2 = ax.twinx()
-ocData.plot(ax=ax2,x='I_rot_A',y='V_stat_LL',figsize=(8, 4),marker = "*",color='g')
+ocData.plot(ax=ax2,x='I_rot_A',y='V_stat_LL',figsize=(8, 4),marker = "o",color='g')
 ax2.set_ylabel("$V_{stat}$ ($V_{LL}$)")
-ax2.legend(loc='lower right')
+ax2.set_ylim(ymin = 0)
+ax2.yaxis.label.set_color('g')
 
 ax3 = ax.twinx()
+ax3.spines.right.set_position(("axes", 1.1))
+ax3.set_ylim([0,0.05])
+ax3.set_ylabel("Sync Impedence $Z_s$ ($\Omega$)")
+ax3.yaxis.label.set_color('r')
+zSync.plot(ax=ax3,x='I_rot_A',y='z_sync',marker="^",color='r',label="$Z_s$ (Calculated)")
 
+ax.vlines(x=zSync.I_rot_A, ymin=0, ymax=zSync.I_stat,linestyle='--',color='b',lw=1)
+ax2.hlines(y=zSync.V_stat_LL,xmax=0.6,xmin=zSync.I_rot_A,linestyle='--',color='g',lw=1)
+fig=zSync.plot(ax=ax2,x='I_rot_A',y='V_stat_LL',marker="^",color='r',linestyle=':',lw=3)
+out =ax2.legend(loc='lower right')
 #+End_src
 
+#+ATTR_LATEX: placement [H] :booktabs t:
+#+caption: Synchronous Impedance Calculated according to Equation ref:equation.
+#+NAME: figSynchrinousImpedance
 #+RESULTS: pltSyncrinousImpedancePlot
-[[file:./.ob-jupyter/fcdea48d40491d84a3ba727af0ba6888973177de.png]]
+[[file:./.ob-jupyter/1ae32148794ed53aed22ddaf3102e86aa83a28af.png]]
