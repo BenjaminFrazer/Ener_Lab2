@@ -84,7 +84,7 @@
 #+NAME: tabScTest
 |   | I_{rot} (mA) | I_{stat} (mA) |
 |---+--------------+---------------|
-| ! |     I_rot_mA |        I_stat |
+| ! |     I_rot_mA |     I_stat_mA |
 |   |            0 |             0 |
 |   |           52 |             0 |
 |   |          101 |           350 |
@@ -114,7 +114,7 @@
 - The Rotor field excitation current and the DC Motor Current (its torque) is adjusted to minimise the AC stator current
   + the generator is neither motoring or generating with losses supplied by the DC motor (no real power is flowing between the grid and the synchronous machine)
 
-*** Test 1 - Generating with unity power factor (Zero Q)- (Step 3)
+*** Test 1 - Unity PF (Step 3)
 **** Procedure
 - The Current to the DC motor is increased until the stator current is roughly \(2/3\; I_{nom}\) which is calculated as =464mA=
   + I Guess this will be primarily real power
@@ -133,18 +133,18 @@
 #+ATTR_LATEX: placement [H] :booktabs t:
 #+caption: Mesurements while operating at zero reactive power
 #+NAME: tabGeneratingZeroS
-|   | Measurand                | Value    |
-|---+--------------------------+----------|
-| ! | measurand                | val      |
-|   | Field Excitation Current | 478 mA   |
-|   | Line Current             | 417 mA   |
-|   | Line Voltage             | 47.2 V   |
-|   | Active Power             | 33.4 W   |
-|   | Power Factor             | 1        |
-|   | Prime Mover Input Power  | 105.67 W |
-|   | Rotor (load) Angle       | 330°     |
+|   | Measurand                | Value    | Units   |
+|---+--------------------------+----------+---------|
+| ! | measurand                | val      |         |
+|   | Field Excitation Current | 0.478    | A       |
+|   | Line Current             | 0.417    | A       |
+|   | Line Voltage             | 47.2     | V       |
+|   | Active Power             | 33.4     | W       |
+|   | Power Factor             | 1        |         |
+|   | Prime Mover Input Power  | 105.67   | W       |
+|   | Rotor (load) Angle       | 330      | degrees |
 
-***  Test 2 - Generating at rated current (Positive Q) - (Step 4)
+*** Test 2 - Leading PF (Step 4)
 **** Procedure
 - The rotor excitation current is increased until the stator current reaches its nominal value.
   + the Prime-mover torque is kept constant
@@ -160,18 +160,18 @@
 #+ATTR_LATEX: placement [H] :booktabs t:
 #+caption: Mesurements while operating at rated current with negative reactive power
 #+NAME: tabGeneratingPosQ
-|   | Measurand                | Value    |
-|---+--------------------------+----------|
-| ! | measurand                | val     |
-|   | Field Excitation Current | 638 mA   |
-|   | Line Current             | 689 mA   |
-|   | Line Voltage             | 47.5 V   |
-|   | Active Power             | 36.0 W   |
-|   | Power Factor             | 0.63     |
-|   | Prime Mover Input Power  | 104.48 W |
-|   | Rotor (load) Angle       | 150°     |
+|   | Measurand                |  Value | Units   |
+|---+--------------------------+--------+---------|
+| ! | measurand                |    val |         |
+|   | Field Excitation Current |  0.638 | A       |
+|   | Line Current             |  0.689 | A       |
+|   | Line Voltage             |   47.5 | V       |
+|   | Active Power             |   36.0 | W       |
+|   | Power Factor             |   0.63 |         |
+|   | Prime Mover Input Power  | 104.48 | W       |
+|   | Rotor (load) Angle       |    150 | degrees |
 
-*** Test 3 Generating at rated current (Negative Q) - (Step 5)
+*** Test 3 - Lagging PF (Step 5)
 **** Procedure
 - 24:29
 - DC Motor Power is kept constant
@@ -190,20 +190,29 @@
 #+ATTR_LATEX: placement [H] :booktabs t:
 #+caption: Mesurements while operating at rated current and positive negative power
 #+NAME: tabGeneratingNegQ
-|   | Measurand                | Value   |
-|---+--------------------------+---------|
-| ! | measurand                | val     |
-|   | Field Excitation Current | 334 mA  |
-|   | Line Current             | 692 mA  |
-|   | Line Voltage             | 47.6 V  |
-|   | Active Power             | 42.8 W  |
-|   | Power Factor             | –0.75   |
-|   | Prime Mover Input Power  | 110.2 W |
-|   | Rotor (load) Angle       | 150°    |
+|   | Measurand                | Value | Units   |
+|---+--------------------------+-------+---------|
+| ! | measurand                |   val |         |
+|   | Field Excitation Current | 0.334 | A       |
+|   | Line Current             | 0.692 | A       |
+|   | Line Voltage             |  47.6 | V       |
+|   | Active Power             |  42.8 | W       |
+|   | Power Factor             | –0.75 |         |
+|   | Prime Mover Input Power  | 110.2 | W       |
+|   | Rotor (load) Angle       |   150 | degrees |
 
 * Deductions
-** Synchronous Impedance Plot
+** Synchronous Impedance Plot :noexport:
+The results for the short-circuit and open circuit tests are plotted in Figure ref:figSynchrinousImpedance along with the synchronous impedance calculated from both lines by interpolation. The synchronous impedance is defined according to Formula ref:eqSyncrinousImpedance which can be derived according to the equivalent circuit of the synchronous machine.
+#+NAME: eqSyncrinousImpedance
+\begin{align}
+Z_s= \frac{V_{EMF}}{I_{Ph}}
+\end{align}
+Since it is impossible to directly measured the V_{EMF} while current is flowing through the terminals of the synchronous machine, we must first establish V_{EMF} from the open circuit test. Since it is known that \(V_{EMF}\propto I_{rot}\) We record the OC voltage against different rotor excitation currents and similarly record the SC stator currents against rotor excitation current. Since \(V_{OCLL}(V_{rot})\times \frac{1}{\sqrt{3}}=V_{EMF}(V_{rot})\) the SC current at a given I_{rot} can be assumed to be driven by the V_{EMF} for that same I_{rot}.
 
+Complicating this somewhat is the fact that the measurements for V_{EMF} and I_{Ph} are not taken at the exact same rotor excitation current (I_{rot}), as such a 1D linear interpolation is used over the range of valid[fn::Some of the initial measurements of I_{stat} read zero and as such would lead to a divide by zero in Eq ref:eqSyncrinousImpedance and as such have been excluded] Short circuit measurements (I_{stat}). Figure ref:figSynchrinousImpedance attempts to show the interpolation with the dotted red lines showing the x axis points chosen to evaluate Z_s. for simplicity the points are chosen to coincide with the actual measurements of I_{stat} so interpolation was only conducted on V_{Ph} [fn:: the interpolated points on V_{stat} are highlighted as red markers on the V_{stat} line]. Finally the calculated Z_s for each point is plotted (shown in red). As can be seen from the flat nature of the line, Calculated Z_s is basically constant over the selected range of I_{rot}.
+
+:impedancePltSrc:
 #+NAME: pltSyncrinousImpedancePlot
 #+BEGIN_SRC jupyter-python :session test :var ocData=tabOcTest scData=tabScTest :exports results
 import pandas as pd
@@ -215,16 +224,17 @@ plt.rcParams['savefig.dpi'] = 300
 ocData = pd.DataFrame(ocData[1:], columns=ocData[0])
 scData = pd.DataFrame(scData[1:], columns=scData[0])
 scData['I_rot_A'] =scData['I_rot_mA']/1000
+scData['I_stat_A'] =scData['I_stat_mA']/1000
 ocData['V_stat_Ph'] =ocData['V_stat_LL']/np.cbrt(3)
 
 # here i'm interpolating the SC x axis to the OC x axis
-zSync = scData[['I_stat','I_rot_A']].copy()
+zSync = scData[['I_stat_A','I_rot_A']].copy()
 zSync['V_stat_LL']=np.interp(scData['I_rot_A'],ocData['I_rot_A'],ocData['V_stat_LL'])
 zSync['V_stat_Ph']=zSync['V_stat_LL']/np.cbrt(3)
-zSync['z_sync']=zSync['V_stat_Ph']/zSync['I_stat']
+zSync['z_sync']=zSync['V_stat_Ph']/zSync['I_stat_A']
 zSync = zSync.drop(zSync[np.isinf(zSync.z_sync)].index)
 
-ax = scData.plot(x='I_rot_A',y='I_stat',figsize=(8, 4),marker = "+")
+ax = scData.plot(x='I_rot_A',y='I_stat_A',figsize=(8, 4),marker = "+")
 ax.set_xlabel("$I_{rotor}$ (A)")
 ax.set_ylabel("$I_{stat}$ (A)")
 ax.legend(loc='upper left')
@@ -241,19 +251,296 @@ ax2.yaxis.label.set_color('g')
 
 ax3 = ax.twinx()
 ax3.spines.right.set_position(("axes", 1.1))
-ax3.set_ylim([0,0.05])
+ax3.set_ylim([22,50])
 ax3.set_ylabel("Sync Impedence $Z_s$ ($\Omega$)")
 ax3.yaxis.label.set_color('r')
 zSync.plot(ax=ax3,x='I_rot_A',y='z_sync',marker="^",color='r',label="$Z_s$ (Calculated)")
+ax3.grid("on")
 
-ax.vlines(x=zSync.I_rot_A, ymin=0, ymax=zSync.I_stat,linestyle='--',color='b',lw=1)
+ax.hlines(y=zSync.I_stat_A, xmin=0, xmax=zSync.I_rot_A,linestyle='--',color='b',lw=1)
+ax.vlines(x=zSync.I_rot_A, ymin=0, ymax=zSync.I_stat_A,linestyle='--',color='r',lw=1)
 ax2.hlines(y=zSync.V_stat_LL,xmax=0.6,xmin=zSync.I_rot_A,linestyle='--',color='g',lw=1)
-fig=zSync.plot(ax=ax2,x='I_rot_A',y='V_stat_LL',marker="^",color='r',linestyle=':',lw=3)
+fig=zSync.plot(ax=ax2,x='I_rot_A',y='V_stat_LL',marker="^",color='r',linestyle=':',lw=3,label= "$V_{stat}$ (interpolated)")
 out =ax2.legend(loc='lower right')
 #+End_src
-
+:end:
 #+ATTR_LATEX: placement [H] :booktabs t:
 #+caption: Synchronous Impedance Calculated according to Equation ref:equation.
 #+NAME: figSynchrinousImpedance
 #+RESULTS: pltSyncrinousImpedancePlot
-[[file:./.ob-jupyter/1ae32148794ed53aed22ddaf3102e86aa83a28af.png]]
+[[file:./.ob-jupyter/3e1f9b308336687e238480841a5bc08dfc66c310.png]]
+
+:ImpedanceCalc:
+#+NAME: calcImpedance
+#+BEGIN_SRC jupyter-python :session test :exports none
+I_rot_Vrated=np.interp(41.5,zSync['V_stat_LL'],zSync.I_rot_A)
+# display(I_rot_Vrated)
+Z_s = np.round(np.interp(I_rot_Vrated,zSync['I_rot_A'],zSync['z_sync']),4)
+Z_s
+# Z_s= np.round(np.mean(zSync['z_sync']),2)
+#+End_src
+
+#+RESULTS: calcImpedance
+: 25.3975
+:end:
+The final Z_s is calculated by simply taking the value of Z_s where the open circuit voltage is at rated (=41.5V=). This yields call_calcImpedance() \Omega.
+
+** Pu Impedance
+:baseImpedenceCalc:
+#+NAME: calcBaseImpedance
+#+BEGIN_SRC jupyter-python :session test :exports none
+statVolt = 41.5
+ratedPower = 50
+Z_base = statVolt**2/ratedPower
+Z_base
+#+End_src
+
+#+RESULTS: calcBaseImpedance
+: 34.445
+:end:
+From Equation ref:eqZbase and the nameplate values in for rated line voltage  and Power in Table ref:tabAltNameplate, the base impedance is calculated as call_calcBaseImpedance()\Omega.
+
+#+NAME: eqZbase
+\begin{align}
+Z_{base} =\frac{V_{rated (LL)}^2}{S_{rated}}
+\end{align}
+
+:calcPuImpedance:
+#+NAME: calcPuImpedance
+#+BEGIN_SRC jupyter-python :session test :exports none
+Z_pu = np.round(Z_s/Z_base,2)
+Z_pu
+#+End_src
+
+#+RESULTS: calcPuImpedance
+: 0.74
+:end:
+The base impedance is then used to calculate the per unit impedance according to Equation ref:eqZs_pu, yielding call_calcPuImpedance() Pu.
+#+NAME: eqZs_pu
+\begin{align}
+Z_{s(pu)} = \frac{Z_{s}}{Z_{base}}
+\end{align}
+
+** Load tests
+For the following tests power factor is taken form the experimental measurements.
+*** Per-unitisation/Base Values
+:notes:
+determine
+- power factor - this is logged
+
+calculate pu values for:
+- Ac line current (pu)
+- Ac line voltage (pu)
+
+Construct a Phasor diagram with
+- derived pu line voltage
+- derived pu line current
+- per unit reactance - from pervious results
+
+to calculate:
+- field excitation current
+- Rotor load angle
+
+:END:
+Base Voltage and Power are taken from the nameplate values given in Table ref:tabAltNameplate. I_base is then calculated according to:
+#+NAME: eqIbase
+\begin{align}
+I_{base}= \frac{S_{base}}{\sqrt{3}\times V_{base}}
+\end{align}
+Yielding: call_calcBaseImpedance() A.
+:calcBaseValues:
+#+NAME: caclBaseValues
+#+BEGIN_SRC jupyter-python :session test :exports none
+S_base_VA = 50
+V_base_LL = 41.5
+I_base_A = S_base_VA/(np.cbrt(3)*V_base_LL)
+display(np.round(I_base_A,2))
+#+End_src
+
+#+RESULTS: caclBaseValues
+: 0.84
+:end:
+
+*** Current angle
+The angle of the current with respect to the supply voltage vector at the 3-Phase Wattmeter, can be derived from the power factor:
+#+NAME: eqAngle
+\begin{align}
+\theta =-cos^{-1}(pf)
+\end{align}
+Where pf is positive, and:
+#+NAME: eqAngle_neg
+\begin{align}
+\theta =cos^{-1}(-pf)
+\end{align}
+
+*** Voltage drop (v_d)
+Since the load impedance is known, the magnitude of the voltage drop can be calculated according to:
+#+NAME: eqAbsVoltageDrop
+\begin{align}
+V_d = I_{stat}\angle\theta\degree \times Z_s = I_{stat}\angle\theta\degree \times jX_s
+\end{align}
+
+*** V_EMF Calculation
+From the equivalent circuit diagram and applying Kirchhoff's voltage law we know that V_{EMF} of the generator is given by:
+#+NAME: eqV_Em  f
+\begin{align}
+V_{EMF} = V_{supply}\angle0\degree +V_d
+\end{align}
+
+Where V_{supply} is the complex phasor corresponding to the supply voltage and V_d is the voltage drop over the reactive impedance Z_s. Substituting Equation ref:eqAbsVoltageDrop into ref:eqV_Emf we get:
+
+#+NAME: eqV_Emf2
+\begin{align}
+V_{EMF} = V_{supply}\angle0\degree +I_{stat}\angle\theta\degree \times jX_s
+\end{align}
+
+*** Tools :noexport:
+**** Unpack Table
+#+NAME: funUnpackTable
+#+BEGIN_SRC jupyter-python :session test :exports none
+def unpackTable(orgtable):
+    orgtable.pop(0)
+    _dictMeasurments = {}
+    # display(mesurements)
+    for i in range(len(orgtable)):
+        _thisLine = orgtable[i]
+        _thisDictKey = _thisLine[1]
+        _thisDictKey=_thisDictKey.replace(" ","")
+        _thisDictKey=_thisDictKey.replace("(","")
+        _thisDictKey=_thisDictKey.replace(")","")
+        _thisDictVal=_thisLine[2]
+        if type(_thisDictVal)==str:
+            _thisDictVal = float(_thisDictVal.replace('\U00002013', '-'))
+        _dictMeasurments[_thisDictKey] = _thisDictVal
+    return _dictMeasurments
+#+End_src
+
+#+RESULTS: funUnpackTable
+**** Pretty Print Complex
+#+NAME: funPrettyPrintComplex
+#+BEGIN_SRC jupyter-python :session test :exports results
+import math as math
+import cmath as cmath
+def prettyPrint(phasor,units):
+    _polarPhasor = cmath.polar(phasor)
+    _prettyPhasor = f"{_polarPhasor[0]:.4}\\angle {math.degrees(_polarPhasor[1]):.2f}\\degree {units}"
+    return _prettyPhasor
+test = prettyPrint(1j,"(V)")
+display(test)
+#+End_src
+
+#+RESULTS: funPrettyPrintComplex
+: 1.0\angle 90.00\degree (V)
+**** Plot Phasor fun
+#+NAME: funPlotPhasor
+#+BEGIN_SRC jupyter-python :session test :results link
+def plotPhasor(phasor,color2use,label):
+    _polarPhasor = cmath.polar(phasor)
+    _arr =plt.arrow(_polarPhasor [1], 0,0, _polarPhasor [0], linewidth = 2, head_width=0.04,
+            edgecolor = color2use, facecolor = color2use, length_includes_head=True,
+            label=f"{label} {_polarPhasor[0]:.4f}$\\angle${math.degrees(_polarPhasor[1]):.2f}$\\degree$ (pu)")
+#+End_src
+
+**** Full Phasor Plot
+#+NAME: plotEMF
+#+BEGIN_SRC jupyter-python :session test :var mesurements=tabGeneratingNegQ doPlot=1
+import matplotlib.pyplot as plt
+dictMeasurments = unpackTable(mesurements)
+#perunitise
+# display(dictMeasurments)
+V_stat_pu = dictMeasurments['LineVoltage']/V_base_LL
+I_stat_mag_pu = dictMeasurments['LineCurrent']/I_base_A
+pf = dictMeasurments['PowerFactor']
+if pf>0:
+    theta = -math.acos(pf)
+else:
+    theta= math.acos(-pf)
+
+I_stat_pu = cmath.rect(I_stat_mag_pu,theta)
+V_d_pu = Z_pu*1j*I_stat_pu
+V_EMF_pu = V_stat_pu + V_d_pu
+V_EMF_polar_pu = cmath.polar(V_EMF_pu)
+V_EMF_Pretty = f"{np.round(V_EMF_polar_pu[0],2)}\\angle {np.round(math.degrees(V_EMF_polar_pu[1]),2)}"
+
+#plotting
+if doPlot:
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'},figsize=(8,8))
+    ax.set_yticks([0.5,1])
+    colors = plt.cm.gist_rainbow(np.linspace(0, 1,5))
+    legendList = []
+    ax.set_xlim((0,2*np.pi))
+
+    theta_2Plot =np.linspace(0, 2*np.pi, 50)
+    r=np.linspace(1,1, 50)
+    plt.plot(theta_2Plot,r,label="$|1pu|$",linestyle="dashed")
+
+    plotPhasor(V_EMF_pu,colors[4],"$V_{{EMF}} (pu)$")
+    plotPhasor(Z_pu*1j,colors[2],"$Z_{{S}} (pu)$")
+    plotPhasor(V_d_pu,colors[3],"$V_{{d}} (pu)$")
+    plotPhasor(V_stat_pu,colors[1],"$V_{{stat}} (pu)$")
+    plotPhasor(cmath.rect(I_stat_mag_pu,theta),colors[0],"$V_{{EMF}} (pu)$")
+
+    leg=ax.legend(loc='upper right')
+#+End_src
+
+#+RESULTS: plotEMF
+[[file:./.ob-jupyter/af6239d7933c1bcd3c2630254d0969c0decb57ef.png]]
+**** CalcEMF
+#+NAME: funCalcEMF
+#+BEGIN_SRC jupyter-python :session test :var table=tabGeneratingNegQ :results latex
+def calcEMF(funtable):
+    _dictMeasurments = unpackTable(funtable)
+    _V_stat = _dictMeasurments['LineVoltage']
+    _pf = _dictMeasurments['PowerFactor']
+    _I_stat_mag = _dictMeasurments['LineCurrent']
+    if pf>0:
+        _theta = -math.acos(_pf)
+    else:
+        _theta= math.acos(-_pf)
+
+    _I_stat = cmath.rect(_I_stat_mag,_theta)
+    _V_d = Z_s*1j*_I_stat
+    _V_EMF = _V_stat + _V_d
+    return(_V_EMF)
+display(prettyPrint(calcEMF(table),"(V)"))
+#+End_src
+
+#+RESULTS: funCalcEMF
+#+begin_export latex
+: 38.31\angle 20.12\degree (V)
+#+end_export
+**** Excitation Current
+
+*** Test 1 - Unity Power factor
+#+call: plotEMF(mesurements= tabGeneratingZeroS)
+
+#+RESULTS:
+[[file:./.ob-jupyter/52693700b56dc88799f4e4ac9e272607fbb512d3.png]]
+
+*** Test 2 - Lagging PF
+#+call: plotEMF(mesurements=tabGeneratingPosQ)
+
+#+RESULTS:
+[[file:./.ob-jupyter/dc471224eeecd1de9152a2c975e5c5b21ceeaabc.png]]
+
+*** Test 3 - Leading PF
+#+call: plotEMF(mesurements=tabGeneratingNegQ)
+
+#+RESULTS:
+[[file:./.ob-jupyter/e79368e2db92c90066771fd5eafd9836c551dc1f.png]]
+
+*** Field excitation currents
+Field excitation current may now be calculate from the magnitude of V_EMF and the known relationship between field excitation current and V_EMF magnitude. this may then be compared against the measured value as a validations step.
+#+call: funCalcEMF(table=tabGeneratingNegQ)
+
+#+RESULTS:
+#+begin_export latex
+: 38.31\angle 20.12\degree
+#+end_export
+
+
+| Derived V_{EMF} | Derived I_{rot} | Measured I_{rot} |
+|-----------------+-----------------+------------------|
+|                 |                 |                  |
+** Over vs Under excitation
+From the results obtained in this lab is can be seen that operating under excited i.e. with lagging power factor, acts to increase the total load angle of the machine. This means that the total stability margin of the machine in steady state is reduced for the same real power.
