@@ -1,4 +1,4 @@
--*- line-spacing: 0.1; -*-
+# -*- line-spacing: 0.1; -*-
 #+TITLE: Lab 2
 #+STARTUP: latexpreview
 #+STARTUP: show2levels
@@ -105,7 +105,7 @@
 - The DC supply to the DC motor is switched on and the supply voltage is adjusted until the speed of the generator reaches =1500rpm=
 - The DC Rotor supply is now turned on and the current is adjusted until the generator line voltage is =45V= which is the same amplitude of the 3-Phase supply
 - The thee phase supply is now turned on
-  + It is noted that the three lights on the synchronisation unit now begin to flash at =\approx0.5Hz=
+  + It is noted that the three lights on the synchronisation unit now begin to flash at \approx =0.5Hz=
 - The motor speed is then adjusted by varying the DC motor current until the lights cease to flash.
 - The Load switch is now set to =On=
   + it is noted that the lights now Cease to flash meaning the synchronous machine is now synchronised with the 3-Phase supply
@@ -202,7 +202,8 @@
 |   | Rotor (load) Angle       |   150 | degrees |
 
 * Deductions
-** Synchronous Impedance Plot :noexport:
+** Synchronous Impedance Plot
+<<sectSynchronousImpedancePlot>>
 The results for the short-circuit and open circuit tests are plotted in Figure ref:figSynchrinousImpedance along with the synchronous impedance calculated from both lines by interpolation. The synchronous impedance is defined according to Formula ref:eqSyncrinousImpedance which can be derived according to the equivalent circuit of the synchronous machine.
 #+NAME: eqSyncrinousImpedance
 \begin{align}
@@ -265,65 +266,28 @@ out =ax2.legend(loc='lower right')
 #+End_src
 :end:
 #+ATTR_LATEX: placement [H] :booktabs t:
-#+caption: Synchronous Impedance Calculated according to Equation ref:equation.
+#+caption: Synchronous Impedance Calculated according to Equation ref:eqSyncrinousImpedance.
 #+NAME: figSynchrinousImpedance
 #+RESULTS: pltSyncrinousImpedancePlot
 [[file:./.ob-jupyter/3e1f9b308336687e238480841a5bc08dfc66c310.png]]
 
-:ImpedanceCalc:
+The final Z_s is calculated by simply taking the value of Z_s where the open circuit voltage is at rated (=41.5V=) yielding:
+
 #+NAME: calcImpedance
-#+BEGIN_SRC jupyter-python :session test :exports none
+#+BEGIN_SRC jupyter-python :session test :exports results :results latex
 I_rot_Vrated=np.interp(41.5,zSync['V_stat_LL'],zSync.I_rot_A)
 # display(I_rot_Vrated)
 Z_s = np.round(np.interp(I_rot_Vrated,zSync['I_rot_A'],zSync['z_sync']),4)
-Z_s
+print(f"{np.round(Z_s)} \Omega")
 # Z_s= np.round(np.mean(zSync['z_sync']),2)
 #+End_src
 
 #+RESULTS: calcImpedance
-: 25.3975
-:end:
-The final Z_s is calculated by simply taking the value of Z_s where the open circuit voltage is at rated (=41.5V=). This yields call_calcImpedance() \Omega.
-
-** Pu Impedance
-:baseImpedenceCalc:
-#+NAME: calcBaseImpedance
-#+BEGIN_SRC jupyter-python :session test :exports none
-statVolt = 41.5
-ratedPower = 50
-Z_base = statVolt**2/ratedPower
-Z_base
-#+End_src
-
-#+RESULTS: calcBaseImpedance
-: 34.445
-:end:
-From Equation ref:eqZbase and the nameplate values in for rated line voltage  and Power in Table ref:tabAltNameplate, the base impedance is calculated as call_calcBaseImpedance()\Omega.
-
-#+NAME: eqZbase
-\begin{align}
-Z_{base} =\frac{V_{rated (LL)}^2}{S_{rated}}
-\end{align}
-
-:calcPuImpedance:
-#+NAME: calcPuImpedance
-#+BEGIN_SRC jupyter-python :session test :exports none
-Z_pu = np.round(Z_s/Z_base,2)
-Z_pu
-#+End_src
-
-#+RESULTS: calcPuImpedance
-: 0.74
-:end:
-The base impedance is then used to calculate the per unit impedance according to Equation ref:eqZs_pu, yielding call_calcPuImpedance() Pu.
-#+NAME: eqZs_pu
-\begin{align}
-Z_{s(pu)} = \frac{Z_{s}}{Z_{base}}
-\end{align}
-
-** Load tests
-For the following tests power factor is taken form the experimental measurements.
-*** Per-unitisation/Base Values
+#+begin_export latex
+: 25.0 \Omega
+#+end_export
+** Per-unitisation/Base Values
+*** Base Values
 :notes:
 determine
 - power factor - this is logged
@@ -347,20 +311,60 @@ Base Voltage and Power are taken from the nameplate values given in Table ref:ta
 \begin{align}
 I_{base}= \frac{S_{base}}{\sqrt{3}\times V_{base}}
 \end{align}
-Yielding: call_calcBaseImpedance() A.
-:calcBaseValues:
-#+NAME: caclBaseValues
-#+BEGIN_SRC jupyter-python :session test :exports none
+
+Yielding:
+#+NAME: calcBaseValues
+#+BEGIN_SRC jupyter-python :session test :exports results :results latex
 S_base_VA = 50
 V_base_LL = 41.5
-I_base_A = S_base_VA/(np.cbrt(3)*V_base_LL)
-display(np.round(I_base_A,2))
+
+I_base_A = S_base_VA/(np.sqrt(3)*V_base_LL)
+print(f"{np.round(I_base_A,3)} A")
 #+End_src
 
-#+RESULTS: caclBaseValues
-: 0.84
-:end:
+#+RESULTS: calcBaseValues
+#+begin_export latex
+: 0.696 A
+#+end_export
 
+#+NAME: eqZbase
+\begin{align}
+Z_{base} =\frac{V_{rated (LL)}^2}{S_{rated}}
+\end{align}
+
+From Equation ref:eqZbase and the nameplate values in for rated line voltage  and Power in Table ref:tabAltNameplate, the base impedance is calculated as.
+
+#+NAME: calcBaseImpedance
+#+BEGIN_SRC jupyter-python :session test :exports results :results latex
+statVolt = 41.5
+ratedPower = 50
+Z_base = (statVolt**2)/ratedPower
+print(f"{np.round(Z_base)} \Omega")
+#+End_src
+
+#+RESULTS: calcBaseImpedance
+#+begin_export latex
+: 34.0 \Omega
+#+end_export
+
+*** Pu Impedance
+:calcPuImpedance:
+#+NAME: calcPuImpedance
+#+BEGIN_SRC jupyter-python :session test :exports none
+Z_pu = np.round(Z_s/Z_base,2)
+Z_pu
+#+End_src
+
+#+RESULTS: calcPuImpedance
+: 0.74
+:end:
+The base impedance is then used to calculate the per unit impedance according to Equation ref:eqZs_pu, yielding call_calcPuImpedance() Pu.
+#+NAME: eqZs_pu
+\begin{align}
+Z_{s(pu)} = \frac{Z_{s}}{Z_{base}}
+\end{align}
+
+** Calculations
 *** Current angle
 The angle of the current with respect to the supply voltage vector at the 3-Phase Wattmeter, can be derived from the power factor:
 #+NAME: eqAngle
@@ -382,7 +386,7 @@ V_d = I_{stat}\angle\theta\degree \times Z_s = I_{stat}\angle\theta\degree \time
 
 *** V_EMF Calculation
 From the equivalent circuit diagram and applying Kirchhoff's voltage law we know that V_{EMF} of the generator is given by:
-#+NAME: eqV_Em  f
+#+NAME: eqV_Emf
 \begin{align}
 V_{EMF} = V_{supply}\angle0\degree +V_d
 \end{align}
@@ -393,17 +397,97 @@ Where V_{supply} is the complex phasor corresponding to the supply voltage and V
 \begin{align}
 V_{EMF} = V_{supply}\angle0\degree +I_{stat}\angle\theta\degree \times jX_s
 \end{align}
+*** Reacive Power Calculation
+Rective power is calculated based on the measured stator current magnitude \(|I_{stat}|\), the measured magnitude of stator voltage (\(|V_{stat}|\)) and the measured power factor accoring to Equation ref:eqReactivePower.
+#+NAME: eqReactivePower
+\begin{align}
+Q = \frac{3\times I_{stat}V_{stat LL}}{\sqrt{3}}\times \sqrt{1-pf^2}
+\end{align}
+*** Real Power Calculation
+#+NAME: eqRealPower
+\begin{align}
+P = \frac{3\times I_{stat}V_{stat LL}}{\sqrt{3}}\times pf
+\end{align}
 
-*** Tools :noexport:
-**** Unpack Table
+** Calculation Results
+The tabulated calculations of V_EMF, I_rot and Power for each of the three load tests are displayed in Table ref:tabExcitationCurrentsAndPow. The corresponding phasor diagrams are shown in Figures ref:figTest1UnityPf to ref:figTest3LeadingPf.
+#+call: funExcitationCurrent()
+
+#+ATTR_LATEX: placement [H] :booktabs t:
+#+caption: Results of excitation current and V_EMF calculations compared against the mesured excitation current and the Calculated Real and Reacive power 
+#+NAME: tabExcitationCurrentsAndPow   
+#+RESULTS:
+| Test #             | Derived V_{EMF}         | Derived I_{rot} (A) | Measured I_{rot} (A) | S (VA) |  P (W) | Q (VAR) |
+|--------------------+-------------------------+---------------------+----------------------+--------+--------+---------|
+| tabGeneratingZeroS | 50.64\angle 21.24\degree (V) |               0.472 |                0.478 | 19.682 | 19.682 |     0.0 |
+| tabGeneratingPosQ  | 73.56\angle 15.05\degree (V) |               0.766 |                0.638 | 32.728 | 20.618 |  25.416 |
+| tabGeneratingNegQ  | 35.72\angle 39.74\degree (V) |               0.313 |                0.334 | 32.939 | 24.704 | -21.787 |
+
+*** Phasor Diagrams
+**** Test 1 - Unity Power factor
+#+call: plotEMF(mesurementsTable="tabGeneratingZeroS")
+#+caption: Test 1 phasor plot for unity power factor
+#+NAME: figTest1UnityPf
+#+RESULTS:
+[[file:./.ob-jupyter/c50cd125b8e15e90bc04bc42f96b62d28d9a0719.png]]
+
+**** Test 2 - Lagging PF
+#+call: plotEMF(mesurementsTable="tabGeneratingPosQ")
+#+caption: Test 2 phasor plot for lagging power factor
+#+NAME: figTest2LaggingPf
+#+RESULTS:
+[[file:./.ob-jupyter/3eea515be04c694233578b1ed89f746dc7cba4a1.png]]
+
+**** Test 3 - Leading PF
+#+call: plotEMF(mesurementsTable="tabGeneratingNegQ")
+#+caption: Test 3 phasor plot for leading power factor
+#+NAME: figTest3LeadingPf
+#+RESULTS:
+[[file:./.ob-jupyter/9b6b5804b9e76f95cbe61ce41023ec18ebc225eb.png]]
+
+*** Rotor Angle
+The rotor angle is also caclulated implicitly since is is simply the angle of the derived V_EMF (Table ref:tabExcitationCurrentsAndPow). 
+
+*** Field excitation currents
+ Excitation current is caclulated derived from the magnitude of V_EMF and the known relationship between field excitation current and V_EMF magnitude establised in Section ref:sectSynchronousImpedancePlot. This may then be compared against the measured value as a validations step. From Table ref:tabExcitationCurrentsAndPow it is clear that these values match very closely, only differing for test two, possibly due to having to extrapolate outwith the range of the known I_rot vs V_EMF relationship.
+ 
+*** P/Q vs Excitation
+Reactive power is calculated according to Equations ref:eqReactivePower and ref:eqRealPower, and again found in Table ref:tabExcitationCurrentsAndPow. It seems clear for the experimental results that the effect of raising and lowering the excitation current affects both the real and reactive power leaving the generator, however reactive power is substantially more sensitive to this than real power. While real power varied only by several % from nominal, the reactive power flipped between \approx =+0.5pu= reactive power at the high end of excitation and, \approx =-0.5pu=  on the low end of excitation. This implies that higher excitation, and by extension higher V_EMF leads to more reactive power export, while conversely low excitation leads to reactive power import.
+
+** Over vs Under excitation
+From the results obtained in this lab is can be seen that operating under excited i.e. with lagging power factor, acts to increase the total load angle of the machine. This means that the total stability margin of the machine in steady state is reduced for the same real power.
+
+
+* Tools :noexport:
+*** Load Libraries
+#+NAME: loadLibs
+#+BEGIN_SRC jupyter-python :session test
+import math as math
+import cmath as cmath
+import matplotlib.pyplot as plt
+from scipy import interpolate
+#+End_src
+
+#+RESULTS: loadLibs
+*** Load tables
+#+NAME: funLoadTables
+#+BEGIN_SRC jupyter-python :session test :var tabGeneratingZeroS=tabGeneratingZeroS tabGeneratingPosQ=tabGeneratingPosQ tabGeneratingNegQ=tabGeneratingNegQ
+tables={}
+tables["tabGeneratingZeroS"]=tabGeneratingZeroS
+tables["tabGeneratingPosQ"]=tabGeneratingPosQ
+tables["tabGeneratingNegQ"]=tabGeneratingNegQ
+#+End_src
+
+#+RESULTS: funLoadTables
+*** Unpack Table
 #+NAME: funUnpackTable
 #+BEGIN_SRC jupyter-python :session test :exports none
 def unpackTable(orgtable):
-    orgtable.pop(0)
+    # orgtable.pop(0)
     _dictMeasurments = {}
     # display(mesurements)
-    for i in range(len(orgtable)):
-        _thisLine = orgtable[i]
+    for i in range(len(orgtable)-1):
+        _thisLine = orgtable[i+1]
         _thisDictKey = _thisLine[1]
         _thisDictKey=_thisDictKey.replace(" ","")
         _thisDictKey=_thisDictKey.replace("(","")
@@ -416,11 +500,10 @@ def unpackTable(orgtable):
 #+End_src
 
 #+RESULTS: funUnpackTable
-**** Pretty Print Complex
+
+*** Pretty Print Complex
 #+NAME: funPrettyPrintComplex
 #+BEGIN_SRC jupyter-python :session test :exports results
-import math as math
-import cmath as cmath
 def prettyPrint(phasor,units):
     _polarPhasor = cmath.polar(phasor)
     _prettyPhasor = f"{_polarPhasor[0]:.4}\\angle {math.degrees(_polarPhasor[1]):.2f}\\degree {units}"
@@ -431,36 +514,37 @@ display(test)
 
 #+RESULTS: funPrettyPrintComplex
 : 1.0\angle 90.00\degree (V)
-**** Plot Phasor fun
+*** Plot Phasor fun
 #+NAME: funPlotPhasor
 #+BEGIN_SRC jupyter-python :session test :results link
 def plotPhasor(phasor,color2use,label):
     _polarPhasor = cmath.polar(phasor)
-    _arr =plt.arrow(_polarPhasor [1], 0,0, _polarPhasor [0], linewidth = 2, head_width=0.04,
+    _arr =plt.arrow(_polarPhasor[1], 0,0, _polarPhasor[0], linewidth = 2, head_width=0.04,
             edgecolor = color2use, facecolor = color2use, length_includes_head=True,
             label=f"{label} {_polarPhasor[0]:.4f}$\\angle${math.degrees(_polarPhasor[1]):.2f}$\\degree$ (pu)")
 #+End_src
 
-**** Full Phasor Plot
+#+RESULTS: funPlotPhasor
+
+*** Full Phasor Plot
 #+NAME: plotEMF
-#+BEGIN_SRC jupyter-python :session test :var mesurements=tabGeneratingNegQ doPlot=1
-import matplotlib.pyplot as plt
-dictMeasurments = unpackTable(mesurements)
+#+BEGIN_SRC jupyter-python :session test :var mesurementsTable="tabGeneratingPosQ" doPlot=1
+dictMeasurments = unpackTable(tables[mesurementsTable])
 #perunitise
 # display(dictMeasurments)
-V_stat_pu = dictMeasurments['LineVoltage']/V_base_LL
-I_stat_mag_pu = dictMeasurments['LineCurrent']/I_base_A
+V_stat_pu = dictMeasurments['LineVoltage'] /V_base_LL
+I_stat_mag_pu = dictMeasurments['LineCurrent'] /I_base_A
 pf = dictMeasurments['PowerFactor']
 if pf>0:
     theta = -math.acos(pf)
 else:
     theta= math.acos(-pf)
-
 I_stat_pu = cmath.rect(I_stat_mag_pu,theta)
-V_d_pu = Z_pu*1j*I_stat_pu
+V_d_pu = Z_pu*1j*I_stat_pu  # this is a per phase values
 V_EMF_pu = V_stat_pu + V_d_pu
+# display(prettyPrint(V_EMF_pu,"pu"))
 V_EMF_polar_pu = cmath.polar(V_EMF_pu)
-V_EMF_Pretty = f"{np.round(V_EMF_polar_pu[0],2)}\\angle {np.round(math.degrees(V_EMF_polar_pu[1]),2)}"
+# display(dictMeasurments)
 
 #plotting
 if doPlot:
@@ -484,63 +568,72 @@ if doPlot:
 #+End_src
 
 #+RESULTS: plotEMF
-[[file:./.ob-jupyter/af6239d7933c1bcd3c2630254d0969c0decb57ef.png]]
-**** CalcEMF
+[[file:./.ob-jupyter/3eea515be04c694233578b1ed89f746dc7cba4a1.png]]
+:RESULTS:
+
+*** CalcEMF
 #+NAME: funCalcEMF
-#+BEGIN_SRC jupyter-python :session test :var table=tabGeneratingNegQ :results latex
+#+BEGIN_SRC jupyter-python :session test :results latex
 def calcEMF(funtable):
     _dictMeasurments = unpackTable(funtable)
-    _V_stat = _dictMeasurments['LineVoltage']
+    # display(_dictMeasurments)
+    _V_stat_LL = _dictMeasurments['LineVoltage']
+    _V_stat_Ph = _V_stat_LL/np.sqrt(3)
     _pf = _dictMeasurments['PowerFactor']
     _I_stat_mag = _dictMeasurments['LineCurrent']
-    if pf>0:
+    if _pf>0:
         _theta = -math.acos(_pf)
     else:
         _theta= math.acos(-_pf)
-
     _I_stat = cmath.rect(_I_stat_mag,_theta)
     _V_d = Z_s*1j*_I_stat
-    _V_EMF = _V_stat + _V_d
-    return(_V_EMF)
-display(prettyPrint(calcEMF(table),"(V)"))
+    # display(cmath.phase(_V_d))
+    _V_EMF_Ph = _V_stat_Ph +_V_d
+    _V_EMF_LL = _V_EMF_Ph*np.sqrt(3)
+    return(_V_EMF_LL)
+display(prettyPrint(calcEMF(tables["tabGeneratingPosQ"]),"(V)"))
 #+End_src
 
 #+RESULTS: funCalcEMF
 #+begin_export latex
-: 38.31\angle 20.12\degree (V)
-#+end_export
-**** Excitation Current
-
-*** Test 1 - Unity Power factor
-#+call: plotEMF(mesurements= tabGeneratingZeroS)
-
-#+RESULTS:
-[[file:./.ob-jupyter/52693700b56dc88799f4e4ac9e272607fbb512d3.png]]
-
-*** Test 2 - Lagging PF
-#+call: plotEMF(mesurements=tabGeneratingPosQ)
-
-#+RESULTS:
-[[file:./.ob-jupyter/dc471224eeecd1de9152a2c975e5c5b21ceeaabc.png]]
-
-*** Test 3 - Leading PF
-#+call: plotEMF(mesurements=tabGeneratingNegQ)
-
-#+RESULTS:
-[[file:./.ob-jupyter/e79368e2db92c90066771fd5eafd9836c551dc1f.png]]
-
-*** Field excitation currents
-Field excitation current may now be calculate from the magnitude of V_EMF and the known relationship between field excitation current and V_EMF magnitude. this may then be compared against the measured value as a validations step.
-#+call: funCalcEMF(table=tabGeneratingNegQ)
-
-#+RESULTS:
-#+begin_export latex
-: 38.31\angle 20.12\degree
+: 73.56\angle 15.05\degree (V)
 #+end_export
 
+*** Excitation Current Calc
+#+NAME: funExcitationCurrent
+#+BEGIN_SRC jupyter-python :session test
+tables2Use=[
+"tabGeneratingZeroS",
+"tabGeneratingPosQ",
+"tabGeneratingNegQ"]
 
-| Derived V_{EMF} | Derived I_{rot} | Measured I_{rot} |
-|-----------------+-----------------+------------------|
-|                 |                 |                  |
-** Over vs Under excitation
-From the results obtained in this lab is can be seen that operating under excited i.e. with lagging power factor, acts to increase the total load angle of the machine. This means that the total stability margin of the machine in steady state is reduced for the same real power.
+from scipy import interpolate
+# display(prettyPrint(calcEMF(tables["tabGeneratingPosQ"]),"(V)"))
+Headings = ["Test #","Derived V_{EMF}","Derived I_{rot} (A)", "Measured I_{rot} (A)","S (VA)","P (W)","Q (VAR)"]
+# display(tabGeneratingZeroS)
+table2Plot =[Headings,None]
+for i in range(3):
+    # display(tables2Use[i])
+    _thisTable=tables[tables2Use[i]]
+    thisPrettyEmf = prettyPrint(calcEMF(tables[tables2Use[i]]),"(V)")
+    # display(thisPrettyEmf)
+    calc_thisEmf= calcEMF(_thisTable)
+    # display(prettyPrint(calc_thisEmf,'v'))
+    thisTable_dict = unpackTable(_thisTable)
+    thisMesuredIrot = thisTable_dict["FieldExcitationCurrent"]
+    interpFun = interpolate.interp1d( ocData['V_stat_LL'], ocData['I_rot_A'],fill_value='extrapolate')
+    thisDerivedI_rot = interpFun(np.abs(calc_thisEmf))
+    _this_pf=thisTable_dict['PowerFactor']
+    thisV_stat_LL = thisTable_dict['LineVoltage']
+    thisI_stat = thisTable_dict['LineCurrent']
+    thisDerivedS = thisV_stat_LL*thisI_stat
+    thisDerivedP = thisDerivedS*abs(_this_pf)
+    if _this_pf>=0:
+        thisDerivedQ = thisDerivedS*np.sqrt(1-_this_pf**2)
+    else:
+        thisDerivedQ = -thisDerivedS*np.sqrt(1-_this_pf**2)
+    thisRow = [i+1,thisPrettyEmf ,np.round(thisDerivedI_rot,3),thisMesuredIrot,np.round(thisDerivedS,3), np.round(thisDerivedP,3), np.round(thisDerivedQ,3)]
+    table2Plot.append(thisRow)
+display(table2Plot)
+#+End_src
+:RESULTS:
